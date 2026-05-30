@@ -5,38 +5,38 @@
     <title>Password recovery</title>
   </head>
   <body>
+    <div id="status">Processing...</div>
 
-    <h1>Password recovery</h1>h1>
     <script type="module">
-      // 1) Вкажіть ваш project URL (public)
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
       const SUPABASE_URL = "https://nbosurryjbwvaegjhilr.supabase.co";
       const SUPABASE_ANON_KEY = "sb_publishable_kLxoxQMgbCLAMyurU9pqzw_qdQg8JJ4";
 
-      // 2) Підключаємо supabase-js
-      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true, // найважливіше
+        },
       });
 
-      // 3) Завантажуємо токени з URL (hash/# або search)
-      //    detectSessionInUrl: true зробить більшість роботи автоматично,
-      //    але для надійності дочекаємось підтвердження.
+      const statusEl = document.getElementById("status");
+
       (async () => {
         try {
-          // Читаємо сесію після обробки callback
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error) throw error;
 
-          // Якщо session є — можна закрити сторінку або редіректнути
           if (session) {
-            window.location.href = "/"; // або будь-який ваш шлях
+            statusEl.textContent = "OK. Redirecting...";
+            window.location.href = "/"; // або куди вам треба після reset
           } else {
-            document.body.textContent = "No session found. Check Redirect URLs.";
+            statusEl.textContent = "No session found. Check redirect URLs.";
           }
         } catch (e) {
           console.error(e);
-          document.body.textContent = "Auth callback error. Check console.";
+          statusEl.textContent = "Auth callback error. Open console for details.";
         }
       })();
     </script>
