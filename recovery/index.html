@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <title>Password recovery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
+
   <body>
     <div id="status">Processing...</div>
 
@@ -17,8 +19,8 @@
         auth: {
           persistSession: true,
           autoRefreshToken: true,
-          detectSessionInUrl: true, // найважливіше
-        },
+          detectSessionInUrl: true
+        }
       });
 
       const statusEl = document.getElementById("status");
@@ -29,10 +31,10 @@
           if (error) throw error;
 
           if (session) {
-            statusEl.textContent = "OK. Redirecting...";
-            window.location.href = "/"; // або куди вам треба після reset
+            statusEl.textContent = "Success. Redirecting...";
+            window.location.href = "/"; // або потрібний шлях
           } else {
-            statusEl.textContent = "No session found. Check redirect URLs.";
+            statusEl.textContent = "No session found. Check Supabase Redirect URLs.";
           }
         } catch (e) {
           console.error(e);
