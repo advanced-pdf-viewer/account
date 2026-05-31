@@ -12,19 +12,39 @@
 <input id="password" type="password" placeholder="New password">
 <button onclick="reset()">Set new password</button>
 <script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
-  const supabase = createClient("https://nbosurryjbwvaegjhilr.supabase.co", "sb_publishable_kLxoxQMgbCLAMyurU9pqzw_qdQg8JJ4")
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
 
-  async function reset() {
-    const password = document.getElementById("password").value
-    const { error } = await supabase.auth.updateUser({ password })
-    if (error) {
-      alert(error.message)
-    } else {
-      alert("Password updated! Return to the application.")
-    }
+const supabase = createClient(
+  "https://nbosurryjbwvaegjhilr.supabase.co",
+  "sb_publishable_kLxoxQMgbCLAMyurU9pqzw_qdQg8JJ4"
+)
+
+// Обробляємо токен з URL хешу
+const hashParams = new URLSearchParams(window.location.hash.substring(1))
+const access_token  = hashParams.get("access_token")
+const refresh_token = hashParams.get("refresh_token")
+
+if (access_token) {
+  await supabase.auth.setSession({ access_token, refresh_token })
+  document.getElementById("status").textContent = "Enter your new password"
+} else {
+  document.getElementById("status").textContent = "Invalid or expired link"
+}
+
+async function reset() {
+  const password = document.getElementById("password").value
+  if (password.length < 6) {
+    alert("Password must be at least 6 characters")
+    return
   }
-  window.reset = reset
+  const { error } = await supabase.auth.updateUser({ password })
+  if (error) {
+    alert(error.message)
+  } else {
+    alert("Password updated! Return to the application.")
+  }
+}
+window.reset = reset
 </script>
   </body>
 </html>
