@@ -9,38 +9,22 @@
   <body>
     <div id="status">Processing...</div>
 
-    <script type="module">
-      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+<input id="password" type="password" placeholder="New password">
+<button onclick="reset()">Set new password</button>
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+  const supabase = createClient("https://nbosurryjbwvaegjhilr.supabase.co", "sb_publishable_kLxoxQMgbCLAMyurU9pqzw_qdQg8JJ4")
 
-      const SUPABASE_URL = "https://nbosurryjbwvaegjhilr.supabase.co";
-      const SUPABASE_ANON_KEY = "sb_publishable_kLxoxQMgbCLAMyurU9pqzw_qdQg8JJ4";
-
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      });
-
-      const statusEl = document.getElementById("status");
-
-      (async () => {
-        try {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          if (error) throw error;
-
-          if (session) {
-            statusEl.textContent = "Success. Redirecting...";
-            window.location.href = "/"; // або потрібний шлях
-          } else {
-            statusEl.textContent = "No session found. Check Supabase Redirect URLs.";
-          }
-        } catch (e) {
-          console.error(e);
-          statusEl.textContent = "Auth callback error. Open console for details.";
-        }
-      })();
-    </script>
+  async function reset() {
+    const password = document.getElementById("password").value
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) {
+      alert(error.message)
+    } else {
+      alert("Password updated! Return to the application.")
+    }
+  }
+  window.reset = reset
+</script>
   </body>
 </html>
